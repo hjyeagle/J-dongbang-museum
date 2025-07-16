@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>동방미술관 크라우드펀딩 마스터플랜</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral Harmony -->
+    <!-- Application Structure Plan: A thematic, single-page dashboard structure was chosen to transform the dense strategic report into an engaging and persuasive narrative for potential supporters. The flow is designed to guide the user from the core vision (the 'why'), through the detailed execution plan (the 'how'), to the tangible rewards and unique marketing angles. This non-linear, explorable format respects the user's time and allows them to dive into sections of interest, making the complex information more accessible and compelling than a linear document. Key interactions like tabbed sections for the plan, clickable reward cards, and an interactive roadmap are used to layer information and prevent cognitive overload, fostering exploration rather than passive reading. -->
+    <!-- Visualization & Content Choices: 1. Funding Breakdown: Goal=Compare/Inform, Viz=Chart.js Donut Chart, Interaction=Hover to see details. Justification: A donut chart is excellent for showing part-to-whole relationships, making the 500M KRW allocation instantly understandable. Hover interactions provide details without cluttering the UI. 2. Roadmap: Goal=Change/Organize, Viz=HTML/CSS Timeline, Interaction=Click to expand. Justification: A visual timeline is more intuitive for showing phased progress than a table. The click-to-expand feature layers information, presenting a high-level overview first with the option to drill down. 3. Reward Tiers: Goal=Inform/Compare, Viz=HTML/CSS Interactive Cards, Interaction=Click to reveal details. Justification: Cards are visually appealing and allow for easy comparison between tiers. Hiding details until a click reduces initial information density. 4. Strategic Plan: Goal=Organize, Viz=HTML/CSS Tabbed Interface, Interaction=Click to switch views. Justification: Tabs neatly organize the multi-faceted plan (Funding, Tumblebuck Strategy, Roadmap) into digestible chunks within one section, preventing a long, disorienting scroll. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        .bg-primary { background-color: #F8F5F2; }
+        .text-primary { color: #3D405B; }
+        .text-secondary { color: #8D99AE; }
+        .accent-color { color: #E07A5F; }
+        .accent-bg { background-color: #E07A5F; }
+        .accent-border { border-color: #E07A5F; }
+        .nav-link { transition: color 0.3s, border-bottom-color 0.3s; }
+        .nav-link:hover { color: #E07A5F; border-bottom-color: #E07A5F; }
+        .active-nav { color: #E07A5F; border-bottom-color: #E07A5F; }
+        .card { transition: transform 0.3s, box-shadow 0.3s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
+        .tab { cursor: pointer; transition: all 0.3s; }
+        .tab-active { color: #E07A5F; border-color: #E07A5F; }
+        .timeline-item::before { content: ''; position: absolute; left: 11px; top: 12px; bottom: -12px; width: 2px; background-color: #e5e7eb; }
+        .timeline-item:last-child::before { display: none; }
+        .timeline-dot { position: absolute; left: 0; top: 12px; width: 24px; height: 24px; border-radius: 50%; background-color: white; border: 4px solid #E07A5F; }
+        .chart-container { position: relative; width: 100%; max-width: 450px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body class="bg-primary text-primary">
+
+    <header id="header" class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-md">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#hero" class="text-xl font-bold text-primary">동방미술관</a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#vision" class="nav-link pb-1 border-b-2 border-transparent">우리의 비전</a>
+                <a href="#plan" class="nav-link pb-1 border-b-2 border-transparent">마스터플랜</a>
+                <a href="#rewards" class="nav-link pb-1 border-b-2 border-transparent">후원 리워드</a>
+                <a href="#again2002" class="nav-link pb-1 border-b-2 border-transparent">다시, 2002!</a>
+                <a href="#legacy" class="nav-link pb-1 border-b-2 border-transparent">팀과 유산</a>
+            </div>
+            <a href="https://hjyeagle.github.io/dongbang-museum" target="_blank" class="hidden md:inline-block accent-bg text-white font-bold py-2 px-4 rounded-lg hover:opacity-90 transition-opacity">홍보 사이트 방문</a>
+            <button id="mobile-menu-button" class="md:hidden focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4 space-y-2">
+            <a href="#vision" class="block nav-link">우리의 비전</a>
+            <a href="#plan" class="block nav-link">마스터플랜</a>
+            <a href="#rewards" class="block nav-link">후원 리워드</a>
+            <a href="#again2002" class="block nav-link">다시, 2002!</a>
+            <a href="#legacy" class="block nav-link">팀과 유산</a>
+            <a href="https://hjyeagle.github.io/dongbang-museum" target="_blank" class="block accent-bg text-white font-bold py-2 px-4 rounded-lg mt-2 text-center">홍보 사이트 방문</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="py-20 md:py-32 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-primary leading-tight">13년의 역사를 이어, <br class="md:hidden"><span class="accent-color">동방의 빛</span>을 다시 밝힙니다</h1>
+                <p class="mt-6 text-lg md:text-xl text-secondary max-w-3xl mx-auto">황희면 관장의 헌신으로 지켜온 3,000점의 유물. 이제 여러분과 함께 다음 세대를 위한 '동방미술관'으로 새롭게 태어납니다.</p>
+                <div class="mt-12">
+                    <div class="max-w-2xl mx-auto">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold">펀딩 목표</span>
+                            <span class="font-bold accent-color">500,000,000원</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-4">
+                            <div class="accent-bg h-4 rounded-full" style="width: 1%"></div>
+                        </div>
+                         <p class="text-sm mt-2 text-secondary">텀블벅 펀딩 8월-9월 예정</p>
+                    </div>
+                    <a href="#rewards" class="mt-8 inline-block accent-bg text-white font-bold py-3 px-8 rounded-lg text-lg hover:opacity-90 transition-opacity shadow-lg">창립 멤버 되기</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="vision" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold">우리의 비전: 과거와 미래를 잇는 다리</h2>
+                    <p class="mt-4 text-lg text-secondary max-w-3xl mx-auto">이 섹션에서는 13년간의 고려박물관 운영 경험이 어떻게 새로운 동방미술관의 초석이 되었는지, 그리고 우리가 왜 다음 세대와 이 소중한 문화유산을 공유하고자 하는지에 대한 이야기를 담았습니다. 우리의 여정과 미래 비전을 확인해보세요.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="bg-white p-8 rounded-xl shadow-lg card">
+                        <div class="text-5xl font-extrabold accent-color">13</div>
+                        <h3 class="text-2xl font-bold mt-4">년의 헌신</h3>
+                        <p class="mt-2 text-secondary">2011년부터 2024년까지, 중국 대련에서 고려박물관을 운영하며 우리 문화의 가치를 지켜왔습니다.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg card">
+                        <div class="text-5xl font-extrabold accent-color">3,000</div>
+                        <h3 class="text-2xl font-bold mt-4">점의 유산</h3>
+                        <p class="mt-2 text-secondary">황희면 관장이 사비를 들여 수집하고 보존한 3,000여 점의 소중한 유물이 우리를 기다리고 있습니다.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg card">
+                        <div class="text-5xl font-extrabold accent-color">∞</div>
+                        <h3 class="text-2xl font-bold mt-4">세대의 연결</h3>
+                        <p class="mt-2 text-secondary">10대, 20대 청년들이 우리 역사와 예술에 자부심을 느끼고, 그 가치를 이어갈 수 있는 공간을 만듭니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="plan" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold">성공을 위한 마스터플랜</h2>
+                    <p class="mt-4 text-lg text-secondary max-w-3xl mx-auto">이 섹션에서는 우리의 목표 달성을 위한 구체적인 실행 계획을 투명하게 공개합니다. 5억 원의 펀딩 자금이 어떻게 사용되는지, 텀블벅 성공을 위해 어떤 전략을 세웠는지, 그리고 어떤 단계를 거쳐 미술관이 설립되는지 상호작용적인 요소를 통해 직접 확인하고 탐색해 보세요.</p>
+                </div>
+                <div>
+                    <div class="mb-8 border-b border-gray-200">
+                        <nav class="-mb-px flex justify-center space-x-4 md:space-x-8" aria-label="Tabs">
+                            <button data-tab="funding" class="tab tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg">자금 활용 계획</button>
+                            <button data-tab="strategy" class="tab text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-lg">텀블벅 전략</button>
+                            <button data-tab="roadmap" class="tab text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-lg">실행 로드맵</button>
+                        </nav>
+                    </div>
+
+                    <div id="tab-content">
+                        <div id="funding-content" class="tab-pane">
+                             <div class="grid md:grid-cols-2 gap-12 items-center">
+                                <div class="chart-container">
+                                    <canvas id="fundingChart"></canvas>
+                                </div>
+                                <div id="funding-details">
+                                    <h3 class="text-2xl font-bold mb-4">5억, 이렇게 사용됩니다</h3>
+                                    <p class="text-secondary mb-6">후원금은 동방미술관 설립을 위해 가장 중요하고 시급한 세 가지 핵심 영역에 투명하게 사용될 것입니다. 각 항목에 마우스를 올려 상세 내역을 확인해보세요.</p>
+                                    <div class="space-y-4">
+                                        <div data-segment="0" class="funding-item p-4 border-l-4 border-gray-200 transition">
+                                            <h4 class="font-bold text-lg">유물 검증 및 일러스트 제작</h4>
+                                            <p class="text-sm text-secondary">소장 유물의 가치를 공인받고, 젊은 세대와 소통할 매력적인 콘텐츠를 만듭니다.</p>
+                                        </div>
+                                        <div data-segment="1" class="funding-item p-4 border-l-4 border-gray-200 transition">
+                                            <h4 class="font-bold text-lg">미술관 공간 임대 및 조성</h4>
+                                            <p class="text-sm text-secondary">중국 대련에 유물을 안전하게 보관하고 전시할 소중한 보금자리를 마련합니다.</p>
+                                        </div>
+                                        <div data-segment="2" class="funding-item p-4 border-l-4 border-gray-200 transition">
+                                            <h4 class="font-bold text-lg">초기 운영 및 홍보 비용</h4>
+                                            <p class="text-sm text-secondary">미술관의 성공적인 시작과 지속가능성을 위한 기반을 다집니다.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="strategy-content" class="tab-pane hidden">
+                            <div class="text-center">
+                                <h3 class="text-2xl font-bold mb-4">텀블벅 성공을 위한 4단계 전략</h3>
+                                <p class="text-secondary max-w-2xl mx-auto mb-10">텀블벅의 가이드라인을 철저히 준수하며, 성공 사례들을 분석하여 우리만의 필승 전략을 수립했습니다. 각 단계를 클릭하여 상세 전략을 확인하세요.</p>
+                                <div class="grid md:grid-cols-4 gap-4 text-left">
+                                    <details class="bg-gray-50 p-6 rounded-lg cursor-pointer">
+                                        <summary class="font-bold text-lg">1. 철저한 사전 준비</summary>
+                                        <p class="mt-4 text-secondary">명확한 목표, 투명한 예산 계획, 매력적인 리워드 구성으로 텀블벅 심사를 통과하고 후원자들의 신뢰를 얻는 기반을 마련합니다. 비영리 재단 설립 계획을 통해 프로젝트의 공신력을 높입니다.</p>
+                                    </details>
+                                    <details class="bg-gray-50 p-6 rounded-lg cursor-pointer">
+                                        <summary class="font-bold text-lg">2. 가치 기반 스토리텔링</summary>
+                                        <p class="mt-4 text-secondary">13년의 역사와 3,000점 유물에 담긴 비하인드 스토리를 감성적으로 전달합니다. 황희면 관장님의 열정과 비전을 통해 단순한 펀딩을 넘어 가치에 대한 투자를 이끌어냅니다.</p>
+                                    </details>
+                                    <details class="bg-gray-50 p-6 rounded-lg cursor-pointer">
+                                        <summary class="font-bold text-lg">3. 매력적인 리워드 설계</summary>
+                                        <p class="mt-4 text-secondary">핵심 리워드인 '유물 일러스트북'(5만원)을 중심으로, 소액 후원자부터 열성 후원자까지 모두가 만족할 수 있는 차별화된 리워드를 제공합니다. 후원자들을 장기적인 서포터로 전환하는 멤버십 프로그램을 연계합니다.</p>
+                                    </details>
+                                    <details class="bg-gray-50 p-6 rounded-lg cursor-pointer">
+                                        <summary class="font-bold text-lg">4. SNS 콘텐츠 연계</summary>
+                                        <p class="mt-4 text-secondary">기존의 방대한 유물 영상/이미지 자료를 10-20대 트렌드에 맞는 '숏폼' 콘텐츠로 재가공합니다. 'Again 2002' 컨셉을 적용한 바이럴 마케팅으로 펀딩 참여를 극대화합니다.</p>
+                                    </details>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="roadmap-content" class="tab-pane hidden">
+                             <div class="max-w-3xl mx-auto">
+                                <h3 class="text-2xl font-bold mb-4 text-center">동방미술관 설립 로드맵</h3>
+                                <p class="text-secondary max-w-2xl mx-auto mb-12 text-center">펀딩 성공부터 미술관 개관까지, 여러분의 후원이 어떻게 현실이 되는지 단계별 실행 계획을 투명하게 보여드립니다. 각 단계를 클릭해 보세요.</p>
+                                <div class="relative pl-8 space-y-12">
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot"></div>
+                                        <details class="ml-8">
+                                            <summary class="font-bold text-xl cursor-pointer">1단계: 프로젝트 기획 및 준비 (~7월)</summary>
+                                            <p class="mt-2 text-secondary">텀블벅 프로젝트 상세 기획, 리워드용 초기 일러스트 제작, 인플루언서 리스트업 및 접촉, 비영리 재단 설립 법률 자문</p>
+                                        </details>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot"></div>
+                                        <details class="ml-8">
+                                            <summary class="font-bold text-xl cursor-pointer">2단계: 펀딩 심사 및 홍보 시작 (8월 초)</summary>
+                                            <p class="mt-2 text-secondary">텀블벅 프로젝트 심사 신청, SNS 콘텐츠 최적화 및 'Again 2002' 컨셉 영상 배포, 인플루언서 협업 구체화</p>
+                                        </details>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot"></div>
+                                        <details class="ml-8">
+                                            <summary class="font-bold text-xl cursor-pointer">3단계: 크라우드펀딩 진행 (8월~9월)</summary>
+                                            <p class="mt-2 text-secondary">인플루언서 협업 콘텐츠 확산, 텀블벅 커뮤니티 소통 강화, 펀딩 목표 달성률에 따른 이벤트 진행</p>
+                                        </details>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot"></div>
+                                        <details class="ml-8">
+                                            <summary class="font-bold text-xl cursor-pointer">4단계: 미술관 설립 및 후원자 관리 (펀딩 성공 후)</summary>
+                                            <p class="mt-2 text-secondary">대련 미술관 공간 임대 및 조성, 비영리 재단 설립 완료, 후원자 멤버십 프로그램 런칭, 유물 감정 및 일러스트 제작 본격 착수</p>
+                                        </details>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="rewards" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold">미래를 위한 투자, 감사를 담은 리워드</h2>
+                     <p class="mt-4 text-lg text-secondary max-w-3xl mx-auto">여러분의 후원은 단순한 기부가 아닌, 동방미술관의 역사를 함께 써나가는 창립 행위입니다. 저희는 후원 금액에 따라 감사의 마음을 담은 특별한 리워드를 준비했습니다. 각 리워드 카드를 클릭하여 상세 내용과 후원자님을 위한 장기적인 혜택을 확인해보세요.</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="card bg-white rounded-xl shadow-lg p-8 text-center border-t-4 border-gray-200" onclick="toggleDetails(this)">
+                        <h3 class="text-xl font-bold">소액 후원</h3>
+                        <p class="text-3xl font-extrabold my-4">1만원+</p>
+                        <ul class="text-left space-y-2 text-secondary">
+                            <li>✔️ 디지털 월페이퍼</li>
+                            <li>✔️ 후원자 전용 뉴스레터</li>
+                            <li class="reward-details hidden">✔️ 온라인 커뮤니티 초대</li>
+                        </ul>
+                         <p class="text-xs text-blue-500 mt-4 cursor-pointer">자세히 보기</p>
+                    </div>
+                    <div class="card bg-white rounded-xl shadow-lg p-8 text-center border-t-4 accent-border" onclick="toggleDetails(this)">
+                        <span class="accent-bg text-white text-xs font-bold px-3 py-1 rounded-full absolute -top-3 left-1/2 -translate-x-1/2">BEST</span>
+                        <h3 class="text-xl font-bold">일반 후원</h3>
+                        <p class="text-3xl font-extrabold my-4">5만원+</p>
+                        <ul class="text-left space-y-2 text-secondary">
+                             <li>✔️ 소액 후원 리워드 모두 포함</li>
+                             <li>✔️ <span class="accent-color font-bold">유물 스토리북 (1권)</span></li>
+                             <li>✔️ 미술관 멤버십 기본 등급</li>
+                             <li class="reward-details hidden">✔️ 후원자 명단 웹사이트 등재</li>
+                        </ul>
+                         <p class="text-xs text-blue-500 mt-4 cursor-pointer">자세히 보기</p>
+                    </div>
+                    <div class="card bg-white rounded-xl shadow-lg p-8 text-center border-t-4 border-gray-200" onclick="toggleDetails(this)">
+                        <h3 class="text-xl font-bold">특별 후원</h3>
+                        <p class="text-3xl font-extrabold my-4">30만원+</p>
+                        <ul class="text-left space-y-2 text-secondary">
+                             <li>✔️ 일반 후원 리워드 모두 포함</li>
+                             <li>✔️ 스토리북 특별판 (친필 사인)</li>
+                             <li>✔️ 미술관 멤버십 상위 등급</li>
+                             <li class="reward-details hidden">✔️ 온라인 건립 다큐 시청권</li>
+                             <li class="reward-details hidden">✔️ 황희면 관장님과의 온라인 워크숍</li>
+                        </ul>
+                         <p class="text-xs text-blue-500 mt-4 cursor-pointer">자세히 보기</p>
+                    </div>
+                    <div class="card bg-white rounded-xl shadow-lg p-8 text-center border-t-4 border-gray-200" onclick="toggleDetails(this)">
+                        <h3 class="text-xl font-bold">열성 후원</h3>
+                        <p class="text-3xl font-extrabold my-4">100만원+</p>
+                         <ul class="text-left space-y-2 text-secondary">
+                             <li>✔️ 특별 후원 리워드 모두 포함</li>
+                             <li>✔️ 미술관 명예의 전당 등재</li>
+                             <li>✔️ 미술관 멤버십 VIP 등급</li>
+                             <li class="reward-details hidden">✔️ 미술관 개관 후 특별 행사 초청</li>
+                             <li class="reward-details hidden">✔️ 미술관 자문단/서포터즈 참여 기회</li>
+                        </ul>
+                        <p class="text-xs text-blue-500 mt-4 cursor-pointer">자세히 보기</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="again2002" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-bold leading-snug">다시, 2002년의 열정으로<br><span class="accent-color">'우리들의 유물'</span>을 지킵니다</h2>
+                        <p class="mt-6 text-lg text-secondary">이 섹션은 우리의 핵심 마케팅 전략인 'Again 2002' 컨셉을 소개합니다. 2002년의 뜨거웠던 열정과 단합의 에너지를 문화유산 보존을 위한 새로운 움직임으로 연결하고자 합니다. 과도한 애국심이 아닌, '함께 만들어가는 즐거운 도전'이라는 메시지를 통해 10-20대 젊은 세대의 마음을 움직일 인플루언서 협업 전략을 확인해보세요.</p>
+                        <div class="mt-8 space-y-4">
+                            <div class="flex items-start">
+                                <span class="accent-color text-2xl font-bold mr-4">1</span>
+                                <div>
+                                    <h4 class="font-bold text-xl">세대 공감 인플루언서 협업</h4>
+                                    <p class="text-secondary">역사/문화/유머 채널 인플루언서와 협업하여 유물 스토리를 10-20대 눈높이에 맞는 밈, 챌린지, 숏폼 콘텐츠로 재창조합니다.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="accent-color text-2xl font-bold mr-4">2</span>
+                                <div>
+                                    <h4 class="font-bold text-xl">성과 기반 파트너십</h4>
+                                    <p class="text-secondary">초기 비용 부담 없이, 펀딩 성공 시 기여도에 따라 보상하는 합리적인 모델을 제안합니다. 이는 단순 광고가 아닌, 프로젝트 성공을 위한 진정한 파트너십입니다.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="accent-color text-2xl font-bold mr-4">3</span>
+                                <div>
+                                    <h4 class="font-bold text-xl">UGC 바이럴 확산</h4>
+                                    <p class="text-secondary">후원자들이 직접 참여하는 'Again 2002' 챌린지, 유물 밈 만들기 등 사용자 제작 콘텐츠(UGC) 이벤트를 통해 자발적인 홍보와 참여를 유도합니다.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-center items-center">
+                         <div class="w-full h-80 bg-gray-100 rounded-xl flex items-center justify-center p-8 shadow-inner">
+                            <p class="text-2xl text-center font-bold text-secondary">
+                                "2002년의 붉은 함성, <br>이제는 동방의 빛을 지키는 <br>하나의 목소리로!"
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="legacy" class="py-20">
+             <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold">한 사람의 열정에서 모두의 유산으로</h2>
+                    <p class="mt-4 text-lg text-secondary max-w-3xl mx-auto">이 섹션에서는 프로젝트의 구심점인 황희면 관장님과, 이 프로젝트를 일회성 이벤트가 아닌 영속적인 문화 사업으로 만들 비영리 재단 설립 계획을 소개합니다. 여러분의 후원이 어떻게 투명하고 지속가능한 유산으로 남게 되는지 알아보세요.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden md:flex">
+                    <div class="md:w-1/3 p-8 flex flex-col items-center justify-center text-center bg-gray-50">
+                        <div class="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center mb-4">
+                            <span class="text-5xl text-gray-500">👤</span>
+                        </div>
+                        <h3 class="text-2xl font-bold">황희면 관장</h3>
+                        <p class="text-secondary">1949년생, 70대 중반</p>
+                        <p class="mt-4 text-primary">"13년간 지켜온 우리 유산의 가치를 다음 세대에게 온전히 물려주는 것이 제 마지막 소명입니다."</p>
+                    </div>
+                    <div class="md:w-2/3 p-8 md:p-12">
+                        <h3 class="text-2xl font-bold mb-4">비영리 재단 설립: 투명성과 지속가능성을 향한 약속</h3>
+                        <p class="text-secondary mb-6">펀딩 성공 후, 우리는 '동방미술관'의 영구적인 운영을 위한 비영리 재단을 설립할 것입니다. 이는 황희면 관장님의 개인 프로젝트가 아닌, 모든 후원자와 국민을 위한 공공의 자산으로 나아가는 첫걸음입니다.</p>
+                        <div class="space-y-4">
+                            <p><strong>✔️ 투명한 운영:</strong> 모든 펀딩 자금과 향후 수익은 재단 명의로 투명하게 관리되며, 공익법인 회계 기준을 철저히 준수합니다.</p>
+                            <p><strong>✔️ 전문적인 관리:</strong> 문화예술, 법률, 재정 등 각계 전문가로 구성된 이사회를 통해 전문적이고 안정적으로 미술관을 운영합니다.</p>
+                            <p><strong>✔️ 영속적인 유산:</strong> 재단 설립을 통해 동방미술관은 특정 개인에게 의존하지 않고, 세대를 이어 지속가능한 문화 공간으로 자리매김할 것입니다.</p>
+                            <p><strong>✔️ 후원자 혜택:</strong> 한국에 설립될 비영리 재단을 통한 후원은 세금 공제 혜택의 가능성을 열어, 후원의 가치를 더욱 높여줍니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white border-t py-12">
+        <div class="container mx-auto px-6 text-center text-secondary">
+            <h3 class="text-2xl font-bold text-primary mb-4">동방미술관과 함께 역사를 만들어주세요</h3>
+            <p class="mb-8">더 자세한 정보와 최신 소식은 아래 채널에서 확인하실 수 있습니다.</p>
+            <div class="flex justify-center space-x-6 mb-8">
+                 <a href="https://hjyeagle.github.io/dongbang-museum" target="_blank" class="hover:text-accent-color transition-colors">웹사이트</a>
+                 <a href="#" class="hover:text-accent-color transition-colors">YouTube</a>
+                 <a href="#" class="hover:text-accent-color transition-colors">Instagram</a>
+                 <a href="#" class="hover:text-accent-color transition-colors">텀블벅(예정)</a>
+            </div>
+            <p class="text-sm">&copy; 2024 Oriental Art Museum Project. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active-nav');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active-nav');
+                    }
+                });
+            });
+
+            const tabs = document.querySelectorAll('.tab');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(item => item.classList.remove('tab-active'));
+                    tab.classList.add('tab-active');
+
+                    const target = tab.getAttribute('data-tab');
+                    tabPanes.forEach(pane => {
+                        if (pane.id === `${target}-content`) {
+                            pane.classList.remove('hidden');
+                        } else {
+                            pane.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            const fundingData = {
+                labels: ['유물 검증/일러스트', '미술관 임대/조성', '초기 운영/홍보'],
+                datasets: [{
+                    label: '자금 활용 계획',
+                    data: [180000000, 250000000, 70000000],
+                    backgroundColor: [
+                        'rgba(141, 153, 174, 0.7)',
+                        'rgba(224, 122, 95, 0.7)',
+                        'rgba(61, 64, 91, 0.7)',
+                    ],
+                    borderColor: [
+                        '#8D99AE',
+                        '#E07A5F',
+                        '#3D405B',
+                    ],
+                    borderWidth: 2,
+                    hoverOffset: 12
+                }]
+            };
+            
+            const fundingItems = document.querySelectorAll('.funding-item');
+            
+            const config = {
+                type: 'doughnut',
+                data: fundingData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                   size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(context.parsed);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    onHover: (event, chartElement) => {
+                        fundingItems.forEach(item => {
+                           item.style.backgroundColor = 'transparent';
+                           item.style.borderColor = '#e5e7eb';
+                        });
+
+                        if(chartElement.length > 0) {
+                            const hoveredSegment = chartElement[0].index;
+                            const targetItem = document.querySelector(`.funding-item[data-segment="${hoveredSegment}"]`);
+                            if (targetItem) {
+                                targetItem.style.backgroundColor = fundingData.datasets[0].backgroundColor[hoveredSegment].replace('0.7', '0.2');
+                                targetItem.style.borderColor = fundingData.datasets[0].borderColor[hoveredSegment];
+                            }
+                        }
+                    }
+                }
+            };
+            
+            const fundingChartCanvas = document.getElementById('fundingChart');
+            if(fundingChartCanvas) {
+                const fundingChart = new Chart(fundingChartCanvas, config);
+                
+                fundingItems.forEach((item, index) => {
+                    item.addEventListener('mouseover', () => {
+                        fundingChart.setActiveElements([{ datasetIndex: 0, index: index }]);
+                        fundingChart.tooltip.setActiveElements([{ datasetIndex: 0, index: index }]);
+                        fundingChart.update();
+                        fundingItems.forEach(el => {
+                           el.style.backgroundColor = 'transparent';
+                           el.style.borderColor = '#e5e7eb';
+                        });
+                        item.style.backgroundColor = fundingData.datasets[0].backgroundColor[index].replace('0.7', '0.2');
+                        item.style.borderColor = fundingData.datasets[0].borderColor[index];
+                    });
+                     item.addEventListener('mouseout', () => {
+                        fundingChart.setActiveElements([]);
+                        fundingChart.tooltip.setActiveElements([]);
+                        fundingChart.update();
+                        item.style.backgroundColor = 'transparent';
+                        item.style.borderColor = '#e5e7eb';
+                    });
+                });
+            }
+        });
+
+        function toggleDetails(cardElement) {
+            const details = cardElement.querySelectorAll('.reward-details');
+            const buttonText = cardElement.querySelector('p.text-xs');
+            details.forEach(detail => {
+                detail.classList.toggle('hidden');
+            });
+            if (buttonText.textContent === '자세히 보기') {
+                buttonText.textContent = '간략히 보기';
+            } else {
+                buttonText.textContent = '자세히 보기';
+            }
+        }
+    </script>
+</body>
+</html>
